@@ -19,7 +19,7 @@ root/
 │ ├── quality-analysis/ # Dockerfile for code quality analysis
 │ ├── security-analysis/ # Dockerfile for code security analysis
 │ ├── doc/ # Dockerfile for documentation generation
-│ ├── build/ # Dockerfile for firmware compilation
+│ ├── arm-build/ # Dockerfile for firmware compilation
 │ ├── unit-test/ # Dockerfile for unit tests
 │ ├── component-test/ # Dockerfile for component tests
 │ ├── integration-test/ # Dockerfile for integration tests
