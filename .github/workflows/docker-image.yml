@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: GHCR Docker Builder & Publisher
 
 on:
   push:
@@ -10,32 +10,17 @@ permissions:
   contents: read
   packages: write
 
-jobs:
-  build-images:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        image: [
-          fw-dummy
-          # fw-static-analysis,
-          # fw-quality-analysis,
-          # fw-security-analysis,
-          # fw-doc,
-          # fw-build,
-          # fw-unit-test,
-          # fw-component-test,
-          # fw-integration-test,
-          # fw-system-test,
-          # fw-deploy-testbench,
-          # fw-system-e2e,
-          # fw-acceptance,
-          # fw-report,
-          # fw-release
-        ]
-
+  
+  jobs:
+    build:
+        runs-on: ubuntu-latest 
+        strategy:
+          matrix:
+            image: [fw-dummy]
+            platform: [linux/amd64, linux/arm64]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4   
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -46,13 +31,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
+      
+      - name: Build & Push
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
-          docker buildx build \
-            --platform linux/amd64,linux/arm64 \
-            --file ./${{ matrix.image }}/Dockerfile \
-            --tag $IMAGE_NAME:latest \
-            --push \
-            ./${{ matrix.image }}
+            IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
+            docker buildx build \
+            --platform ${{ matrix.platform }} \
+            --build-arg PLATFORM=$(echo ${{ matrix.platform }} | cut -d'/' -f1) \
+            --build-arg ARCH=$(echo ${{ matrix.platform }} | cut -d'/' -f2) \
+            
+            -f ./${{ matrix.image }}/Dockerfile \
+            -t $IMAGE_NAME:latest \
+            --push .
