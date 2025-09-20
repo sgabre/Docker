@@ -7,12 +7,34 @@ on:
     branches: [ "main" ]
 
 jobs:
-
-  build:
-
+  build-images:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [
+          fw-dummy
+          # fw-static-analysis,
+          # fw-quality-analysis,
+          # fw-security-analysis,
+          # fw-doc,
+          # fw-build,
+          # fw-unit-test,
+          # fw-component-test,
+          # fw-integration-test,
+          # fw-system-test,
+          # fw-deploy-testbench,
+          # fw-system-e2e,
+          # fw-acceptance,
+          # fw-report,
+          # fw-release
+        ]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: |
+          docker build \
+            --file ./${{ matrix.image }}/Dockerfile \
+            --tag my-image-${{ matrix.image }}:$(date +%s) \
+            ./${{ matrix.image }}
