@@ -10,36 +10,38 @@ permissions:
   contents: read
   packages: write
 
-  
-  jobs:
-    build:
-        runs-on: ubuntu-latest 
-        strategy:
-          matrix:
-            image: [fw-dummy]
-            platform: [linux/amd64, linux/arm64]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [fw-dummy]
+        platform: [linux/amd64, linux/arm64]
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4   
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: GHCR Logging
+      - name: Login to GHCR
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Build & Push
         run: |
-            IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
-            docker buildx build \
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
+          PLATFORM=${{ matrix.platform.split('/')[0] }}
+          ARCH=${{ matrix.platform.split('/')[1] }}
+
+          docker buildx build \
             --platform ${{ matrix.platform }} \
-            --build-arg PLATFORM=$(echo ${{ matrix.platform }} | cut -d'/' -f1) \
-            --build-arg ARCH=$(echo ${{ matrix.platform }} | cut -d'/' -f2) \
-            
+            --build-arg PLATFORM=$PLATFORM \
+            --build-arg ARCH=$ARCH \
             -f ./${{ matrix.image }}/Dockerfile \
             -t $IMAGE_NAME:latest \
             --push .
