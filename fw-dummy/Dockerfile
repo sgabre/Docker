@@ -1,25 +1,21 @@
-FROM python:3.11-slim-bookworm
- 
-# arm64, amd64, ...
-ARG ARCH
- 
-# This the fw-dummy docker image. it like the hello word
+FROM debian:bookworm-slim
 
+# Optional: multi-arch argument
+ARG ARCH
+ARG PLATFORM
 # Set working directory
 WORKDIR /mnt/workspace
 
-#COPY ${JLINK_DOWNLOAD_URL}/${JLINK_INSTALLER} /tmp/${JLINK_INSTALLER} 
+# Install bash (Debian-based)
+RUN apt-get update && \
+    apt-get install -y bash && \
+    rm -rf /var/lib/apt/lists/*
 
-# Base image
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install --no-install-recommends -y \
-                  git \
-                  unzip \
-                  wget \
-      && apt-get clean \
-      && rm -rf /var/lib/apt/lists/* 
-     
+# Copy your script
+COPY RunMe.sh .
+RUN chmod +x RunMe.sh
 
+# Default command
+ENTRYPOINT ["./RunMe.sh"]
 
- # Default command
-CMD ["bash"]
  
