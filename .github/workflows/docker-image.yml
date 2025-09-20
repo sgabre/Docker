@@ -48,4 +48,4 @@ jobs:
             --build-arg ARCH=$ARCH \
             -f ./${{ matrix.image }}/Dockerfile \
             -t $IMAGE_NAME:latest \
-            --push .
+            --push ./${{ matrix.image }}
