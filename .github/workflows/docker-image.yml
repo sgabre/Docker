@@ -16,7 +16,8 @@ jobs:
     strategy:
       matrix:
         image: [fw-dummy]
-        platform: [linux/amd64, linux/arm64]
+        os: [linux]
+        arch: [amd64, arm64]
 
     steps:
       - name: Checkout repository
@@ -37,15 +38,19 @@ jobs:
           IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
           
           # Split platform into OS and ARCH in Bash
-          PLATFORM=$(echo ${{ matrix.platform }} | cut -d'/' -f1)
-          ARCH=$(echo ${{ matrix.platform }} | cut -d'/' -f2)
+          PLATFORM=${{ matrix.os }}
+          ARCH=${{ matrix.arch }}
+          
+          #DOCKERFILE=Dockerfile.$PLATFORM
+          DOCKERFILE=Dockerfile
+
 
           echo "Building for $PLATFORM/$ARCH..."
           
           docker buildx build \
-            --platform ${{ matrix.platform }} \
+            --platform ${{ matrix.os }}/$ARCH \
             --build-arg PLATFORM=$PLATFORM \
             --build-arg ARCH=$ARCH \
-            -f ./${{ matrix.image }}/Dockerfile \
+            -f ./${{ matrix.image }}/$DOCKERFILE \
             -t $IMAGE_NAME:latest \
             --push ./${{ matrix.image }}
