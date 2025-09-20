@@ -12,20 +12,21 @@ jobs:
     strategy:
       matrix:
         image: [
-          fw-static-analysis,
-          fw-quality-analysis,
-          fw-security-analysis,
-          fw-doc,
-          fw-build,
-          fw-unit-test,
-          fw-component-test,
-          fw-integration-test,
-          fw-system-test,
-          fw-deploy-testbench,
-          fw-system-e2e,
-          fw-acceptance,
-          fw-report,
-          fw-release
+          fw-dummy,
+          #fw-static-analysis,
+          #fw-quality-analysis,
+          #fw-security-analysis,
+          #fw-doc,
+          #fw-build,
+          #fw-unit-test,
+          #fw-component-test,
+          #fw-integration-test,
+          #fw-system-test,
+          #fw-deploy-testbench,
+          #fw-system-e2e,
+          #fw-acceptance,
+          #fw-report,
+          #fw-release
         ]
     steps:
       - name: Checkout repository
