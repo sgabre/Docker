@@ -35,9 +35,13 @@ jobs:
       - name: Build & Push
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
-          PLATFORM=${{ matrix.platform.split('/')[0] }}
-          ARCH=${{ matrix.platform.split('/')[1] }}
+          
+          # Split platform into OS and ARCH in Bash
+          PLATFORM=$(echo ${{ matrix.platform }} | cut -d'/' -f1)
+          ARCH=$(echo ${{ matrix.platform }} | cut -d'/' -f2)
 
+          echo "Building for $PLATFORM/$ARCH..."
+          
           docker buildx build \
             --platform ${{ matrix.platform }} \
             --build-arg PLATFORM=$PLATFORM \
