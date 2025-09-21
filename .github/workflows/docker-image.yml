@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [fw-dummy]
+        image: [fw-dummy, fw-arm-builder]
         os: [linux]
         arch: [amd64, arm64]
 
